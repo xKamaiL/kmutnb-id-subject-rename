@@ -8,14 +8,15 @@ const exit = msg => {
 if (process.argv.length <= 2) {
   const fileName = __filename.split('/')[__filename.split('/').length - 1];
 
-  exit('Usage: ' + fileName + ' [directory]');
+  exit('Usage: ' + fileName + ' [directory] [term:1,2] [part: final,mid]');
 }
 
 const subjects = {
   '030233111': 'abc'
 };
-
-path = path + '/term 1/midterm';
+const term = process.argv[3];
+const isFinal = process.argv[4] === 'mid' ? 'mid' : 'final';
+path = path + '/term ' + term + '/' + isFinal + 'term';
 
 fs.readdir(path, { withFileTypes: true, encoding: 'utf8' }, function(
   err,
