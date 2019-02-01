@@ -5,7 +5,7 @@ const exit = msg => {
   console.log(msg);
   process.exit(-1);
 };
-if (process.argv.length <= 2) {
+if (process.argv.length <= 4) {
   const fileName = __filename.split('/')[__filename.split('/').length - 1];
 
   exit('Usage: ' + fileName + ' [directory] [term:1,2] [part: final,mid]');
