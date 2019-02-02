@@ -10,13 +10,28 @@ if (process.argv.length <= 4) {
 
   exit('Usage: ' + fileName + ' [directory] [term:1,2] [part: final,mid]');
 }
+const year = path.split('/')[path.split('/').length - 1];
 
 const subjects = {
-  '030233111': 'abc'
+  '030233111': 'abc',
+  '393142': 'English ' + year,
+  '341152': 'Circuit ' + year,
+  '394172': 'Math ' + year,
+  '393162': 'Thai ' + year,
+  '392152': 'Chemistry ' + year,
+  '392132': 'Physic ' + year,
+  '340152': 'Measurement ' + year,
+  '393142 EP': 'English ' + year,
+  '341152 EP': 'Circuit ' + year,
+  '394172 EP': 'Math ' + year,
+  '393162 EP': 'Thai ' + year,
+  '392152 EP': 'Chemistry ' + year,
+  '392132 EP': 'Physic ' + year,
+  '340152 EP': 'Measurement ' + year
 };
 const term = process.argv[3];
 const isFinal = process.argv[4] === 'mid' ? 'mid' : 'final';
-path = path + '/term ' + term + '/' + isFinal + 'term';
+path = path + '/term ' + term;
 
 fs.readdir(path, { withFileTypes: true, encoding: 'utf8' }, function(
   err,
@@ -27,29 +42,36 @@ fs.readdir(path, { withFileTypes: true, encoding: 'utf8' }, function(
     exit('Directory is null');
   } else {
     for (var i = 0; i < items.length; i++) {
-      var datePath = path + '/' + items[i].name;
-      // .replace(' ', `\\ `);
+      let datePath = path + '/' + items[i].name;
 
       if (items[i].isDirectory()) {
-        fs.readdir(datePath, function(err, files) {
-          if (err !== null) return console.log(err);
+        fs.readdir(
+          datePath,
+          { withFileTypes: true, encoding: 'utf8' },
+          function(err, files) {
+            if (err !== null) return console.log(err);
 
-          for (var a = 0; a < files.length; a++) {
-            const pathExamination = datePath + '/' + files[a];
-            const fileName = files[a].split('.')[0];
-            fs.stat(pathExamination, (err, examination) => {
-              const searchName = Object.keys(subjects).indexOf(fileName);
-              if (searchName > -1) {
-                const copyPath = datePath + '/' + subjects[fileName] + '.pdf';
-
-                fs.copyFile(pathExamination, copyPath, error => {
-                  if (error !== null) return console.log(error);
-                  console.log('COPIED: ' + copyPath);
+            for (var a = 0; a < files.length; a++) {
+              if (files[a].isFile()) {
+                const pathExamination = datePath + '/' + files[a].name;
+                const fileName = files[a].name.split('.')[0];
+                fs.stat(pathExamination, (err, examination) => {
+                  if (err === null) {
+                    const searchName = Object.keys(subjects).indexOf(fileName);
+                    if (searchName > -1) {
+                      const copyPath =
+                        __dirname + '/' + subjects[fileName] + '.pdf';
+                      fs.copyFile(pathExamination, copyPath, error => {
+                        if (error !== null) return console.log(error);
+                        console.log('COPIED: ' + copyPath);
+                      });
+                    }
+                  }
                 });
               }
-            });
+            }
           }
-        });
+        );
       }
     }
   }
